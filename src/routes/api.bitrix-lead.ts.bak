@@ -1,0 +1,128 @@
+import { createFileRoute } from "@tanstack/react-router";
+import "@tanstack/react-start";
+
+
+const corsHeaders = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: corsHeaders });
+}
+
+function normalizePhone(raw: string): string {
+  const digits = raw.replace(/\D+/g, "");
+  if (!digits) return "";
+  if (digits.length === 11 && digits.startsWith("8")) return "+7" + digits.slice(1);
+  if (digits.length === 11 && digits.startsWith("7")) return "+" + digits;
+  if (digits.length === 10) return "+7" + digits;
+  return "+" + digits;
+}
+
+function sanitize(s: string, max: number): string {
+  return s.replace(/[\u0000-\u001F\u007F]/g, "").trim().slice(0, max);
+}
+
+export const Route = createFileRoute("/api/bitrix-lead")({
+  server: {
+    handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders }),
+      POST: async ({ request }: { request: Request }) => {
+        try {
+          const webhookUrl = process.env.BITRIX_WEBHOOK_URL;
+          if (!webhookUrl) {
+            console.error("[bitrix-lead] BITRIX_WEBHOOK_URL is not configured");
+            return json({ ok: false, error: "Сервис временно недоступен" }, 500);
+          }
+
+          let payload: { name?: unknown; phone?: unknown; message?: unknown; pageUrl?: unknown; formCode?: unknown; source?: unknown };
+          try {
+            payload = await request.json();
+          } catch {
+            return json({ ok: false, error: "Некорректный формат запроса" }, 400);
+          }
+
+          const nameRaw = typeof payload.name === "string" ? sanitize(payload.name, 100) : "";
+          const phoneRaw = typeof payload.phone === "string" ? sanitize(payload.phone, 30) : "";
+          const message = typeof payload.message === "string" ? sanitize(payload.message, 2000) : "";
+          const pageUrl = typeof payload.pageUrl === "string" ? sanitize(payload.pageUrl, 500) : "";
+          const formCodeRaw =
+            typeof payload.formCode === "string"
+              ? payload.formCode
+              : typeof payload.source === "string"
+              ? payload.source
+              : "callback_form_generic";
+          const formCode = sanitize(formCodeRaw, 100);
+
+          const phone = normalizePhone(phoneRaw);
+          if (!phone || phone.replace(/\D/g, "").length < 10) {
+            return json({ ok: false, error: "Укажите корректный телефон" }, 400);
+          }
+          const name = nameRaw || "Без имени";
+
+          const COMMENTS = [
+            `Форма: ${formCode}`,
+            `Страница: ${pageUrl || "—"}`,
+            `Комментарий: ${message || "Не указан"}`,
+          ].join("\n");
+
+          const url = webhookUrl.endsWith("/") ? `${webhookUrl}crm.lead.add.json` : `${webhookUrl}/crm.lead.add.json`;
+
+          const bitrixPayload = {
+            fields: {
+              TITLE: "Заявка с сайта Алгоритмы — обратный звонок",
+              NAME: name,
+              PHONE: [{ VALUE: phone, VALUE_TYPE: "WORK" }],
+              COMMENTS,
+              SOURCE_ID: "WEB",
+              SOURCE_DESCRIPTION: "Форма обратного звонка с сайта Алгоритмы",
+              // If you want to force a specific responsible manager, uncomment:
+              // ASSIGNED_BY_ID: 35,
+            },
+          };
+
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 10000);
+
+          let bitrixRes: Response;
+          try {
+            bitrixRes = await fetch(url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(bitrixPayload),
+              signal: controller.signal,
+            });
+          } catch (e) {
+            clearTimeout(timeout);
+            console.error("[bitrix-lead] Network error:", e);
+            return json({ ok: false, error: "Не удалось связаться с CRM" }, 502);
+          }
+          clearTimeout(timeout);
+
+          const text = await bitrixRes.text();
+          let data: { result?: number; error?: string; error_description?: string } = {};
+          try {
+            data = JSON.parse(text);
+          } catch {
+            console.error("[bitrix-lead] Bitrix non-JSON response:", text.slice(0, 500));
+            return json({ ok: false, error: "Ошибка ответа CRM" }, 502);
+          }
+
+          if (!bitrixRes.ok || data.error) {
+            console.error("[bitrix-lead] Bitrix error:", bitrixRes.status, data);
+            return json({ ok: false, error: "CRM отклонила заявку" }, 502);
+          }
+
+          console.log("[bitrix-lead] Lead created:", data.result);
+          return json({ ok: true, leadId: data.result });
+        } catch (e) {
+          console.error("[bitrix-lead] Unexpected error:", e);
+          return json({ ok: false, error: "Внутренняя ошибка сервера" }, 500);
+        }
+      },
+    },
+  },
+});
