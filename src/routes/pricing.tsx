@@ -1,9 +1,12 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { PageHero } from "@/components/PageHero";
 import { CTASection } from "@/components/CTASection";
+import { PhoneInput } from "@/components/PhoneInput";
+import { ConsentCheckbox, CONSENT_REQUIRED_MSG } from "@/components/ConsentCheckbox";
 import { Send, MessageCircle, MessagesSquare, ArrowRight, CheckCircle2, ShieldCheck, Zap, Loader2 } from "lucide-react";
 import { useState, useRef } from "react";
-import { submitBitrixLead, LEAD_SUCCESS, LEAD_ERROR } from "@/lib/bitrix-lead";
+import { submitBitrixLead, LEAD_ERROR } from "@/lib/bitrix-lead";
+import { isCompleteRuPhone, PHONE_INCOMPLETE_MSG } from "@/lib/phone";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -18,6 +21,7 @@ export const Route = createFileRoute("/pricing")({
 function PricingPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ name: "", company: "", phone: "", email: "", message: "" });
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const lastSubmitRef = useRef(0);
@@ -31,6 +35,14 @@ function PricingPage() {
 
     if (!formData.name.trim() || !formData.phone.trim()) {
       setStatus({ type: "error", text: "Укажите имя и телефон" });
+      return;
+    }
+    if (!isCompleteRuPhone(formData.phone)) {
+      setStatus({ type: "error", text: PHONE_INCOMPLETE_MSG });
+      return;
+    }
+    if (!consent) {
+      setStatus({ type: "error", text: CONSENT_REQUIRED_MSG });
       return;
     }
 
@@ -50,6 +62,7 @@ function PricingPage() {
       });
       if (res.ok) {
         setFormData({ name: "", company: "", phone: "", email: "", message: "" });
+        setConsent(false);
         navigate({ to: "/thank-you" });
         return;
       } else {
@@ -123,10 +136,22 @@ function PricingPage() {
                 <form onSubmit={handleSubmit} className="mt-8 space-y-4" noValidate>
                   <input type="text" placeholder="Имя" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="form-input" required disabled={loading} maxLength={100} />
                   <input type="text" placeholder="Компания" value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })} className="form-input" disabled={loading} maxLength={150} />
-                  <input type="tel" placeholder="Телефон" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="form-input" required disabled={loading} maxLength={30} />
+                  <PhoneInput
+                    value={formData.phone}
+                    onValueChange={(phone) => setFormData((f) => ({ ...f, phone }))}
+                    className="form-input"
+                    required
+                    disabled={loading}
+                  />
                   <input type="email" placeholder="Email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="form-input" disabled={loading} maxLength={150} />
                   <textarea placeholder="Опишите товар, объёмы и задачу" value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} rows={4} className="form-input resize-none" disabled={loading} maxLength={2000} />
-                  <button type="submit" className="btn-primary w-full justify-center" disabled={loading} aria-busy={loading}>
+                  <ConsentCheckbox
+                    id="pricing-privacy-consent"
+                    checked={consent}
+                    onCheckedChange={setConsent}
+                    disabled={loading}
+                  />
+                  <button type="submit" className="btn-primary w-full justify-center" disabled={loading || !consent} aria-busy={loading}>
                     {loading ? (<><Loader2 className="h-4 w-4 animate-spin" /> Отправка...</>) : (<>Получить расчёт <ArrowRight className="h-4 w-4" /></>)}
                   </button>
                   {status && (

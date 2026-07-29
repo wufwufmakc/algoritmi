@@ -1,42 +1,17 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRight, Loader2, PhoneCall, ShieldCheck, Sparkles, Building2, Eye, Rocket, Check } from "lucide-react";
+import { ArrowRight, Loader2, PhoneCall, ShieldCheck, Sparkles, Building2, Eye, Rocket } from "lucide-react";
+import { PhoneInput } from "@/components/PhoneInput";
+import { ConsentCheckbox, CONSENT_REQUIRED_MSG } from "@/components/ConsentCheckbox";
+import { isCompleteRuPhone, PHONE_INCOMPLETE_MSG } from "@/lib/phone";
 
 const BITRIX_LEAD_ENDPOINT = "https://algff.bitrix24.ru/rest/171/byn2r62fvjj301yx/crm.lead.add.json";
-
-const SUCCESS_MSG = "Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.";
 const ERROR_MSG = "Не удалось отправить заявку. Попробуйте ещё раз.";
-
-// If you want to force a specific responsible manager in Bitrix24,
-// add ASSIGNED_BY_ID on the server (src/routes/api.bitrix-lead.ts), e.g.:
-// ASSIGNED_BY_ID: 12
-
-function formatRuPhone(input: string): string {
-  const digits = input.replace(/\D/g, "");
-  // Normalize leading 8 or missing 7 to a 7-prefixed 11-digit number
-  let d = digits;
-  if (d.length === 0) return "";
-  if (d[0] === "8") d = "7" + d.slice(1);
-  if (d[0] !== "7") d = "7" + d;
-  d = d.slice(0, 11);
-
-  const p1 = d.slice(1, 4);
-  const p2 = d.slice(4, 7);
-  const p3 = d.slice(7, 9);
-  const p4 = d.slice(9, 11);
-
-  let out = "+7";
-  if (d.length > 1) out += " (" + p1;
-  if (d.length >= 4) out += ")";
-  if (p2) out += " " + p2;
-  if (p3) out += "-" + p3;
-  if (p4) out += "-" + p4;
-  return out;
-}
 
 export function HomeCallbackSection() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const lastSubmitRef = useRef(0);
@@ -52,9 +27,12 @@ export function HomeCallbackSection() {
       setStatus({ type: "error", text: "Укажите имя и телефон" });
       return;
     }
-    const phoneDigits = form.phone.replace(/\D/g, "");
-    if (phoneDigits.length !== 11) {
-      setStatus({ type: "error", text: "Введите телефон полностью: +7 (___) ___-__-__" });
+    if (!isCompleteRuPhone(form.phone)) {
+      setStatus({ type: "error", text: PHONE_INCOMPLETE_MSG });
+      return;
+    }
+    if (!consent) {
+      setStatus({ type: "error", text: CONSENT_REQUIRED_MSG });
       return;
     }
 
@@ -77,10 +55,6 @@ export function HomeCallbackSection() {
       },
     };
 
-    console.log("BITRIX PAYLOAD", payload);
-    console.log("SOURCE_ID check:", payload.fields.SOURCE_ID === "1" ? "OK (1)" : "FAIL");
-    console.log("COMMENTS domain check:", payload.fields.COMMENTS.includes("https://algff.ru/") && !/lovable/i.test(payload.fields.COMMENTS) ? "OK" : "FAIL");
-
     try {
       const res = await fetch(BITRIX_LEAD_ENDPOINT, {
         method: "POST",
@@ -88,10 +62,10 @@ export function HomeCallbackSection() {
         body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
-      console.log("BITRIX RESPONSE", data);
 
       if (res.ok && data && !data.error && data.result) {
         setForm({ name: "", phone: "", message: "" });
+        setConsent(false);
         navigate({ to: "/thank-you" });
         return;
       } else {
@@ -111,15 +85,19 @@ export function HomeCallbackSection() {
     { icon: Rocket, text: "Тестовый запуск без сложного старта" },
   ];
 
+  const fieldStyle = {
+    background: "hsl(222 35% 9%)",
+    border: "1px solid hsl(222 25% 22%)",
+    color: "hsl(0 0% 100%)",
+  } as const;
+
   return (
     <section className="relative overflow-hidden py-20 md:py-28" style={{ background: "hsl(222 47% 7%)" }}>
-      {/* Ambient glow accents */}
       <div className="pointer-events-none absolute -top-40 -left-40 h-[600px] w-[600px]" style={{ background: "radial-gradient(circle, hsl(222 80% 50% / 0.18), transparent 60%)" }} />
       <div className="pointer-events-none absolute -bottom-40 -right-40 h-[600px] w-[600px]" style={{ background: "radial-gradient(circle, hsl(168 60% 45% / 0.14), transparent 60%)" }} />
 
       <div className="section-container relative">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-10 lg:items-center">
-          {/* Left: copy + trust */}
           <div className="lg:col-span-6 xl:col-span-7 lg:-mt-12">
             <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-xs font-medium" style={{ background: "hsl(222 80% 55% / 0.1)", border: "1px solid hsl(222 80% 55% / 0.22)", color: "hsl(222 80% 72%)" }}>
               <Sparkles className="h-3.5 w-3.5" />
@@ -149,10 +127,8 @@ export function HomeCallbackSection() {
             </div>
           </div>
 
-          {/* Right: premium glass form card */}
           <div className="lg:col-span-6 xl:col-span-5">
             <div className="relative rounded-2xl p-7 md:p-9" style={{ background: "linear-gradient(180deg, hsl(222 30% 13% / 0.85), hsl(222 35% 9% / 0.92))", border: "1px solid hsl(222 25% 22%)", boxShadow: "0 30px 80px hsl(222 50% 4% / 0.6), inset 0 1px 0 hsl(0 0% 100% / 0.06)", backdropFilter: "blur(16px)" }}>
-              {/* Top accent gradient line */}
               <div className="absolute top-0 left-7 right-7 h-px" style={{ background: "linear-gradient(90deg, transparent, hsl(222 80% 60% / 0.6), hsl(168 60% 50% / 0.6), transparent)" }} />
 
               <div className="flex items-center gap-3">
@@ -177,7 +153,7 @@ export function HomeCallbackSection() {
                     required
                     maxLength={100}
                     className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all"
-                    style={{ background: "hsl(222 35% 9%)", border: "1px solid hsl(222 25% 22%)", color: "hsl(0 0% 100%)" }}
+                    style={fieldStyle}
                     onFocus={(e) => (e.currentTarget.style.borderColor = "hsl(222 80% 55%)")}
                     onBlur={(e) => (e.currentTarget.style.borderColor = "hsl(222 25% 22%)")}
                   />
@@ -185,40 +161,13 @@ export function HomeCallbackSection() {
 
                 <div>
                   <label className="mb-1.5 block text-[11px] font-medium uppercase tracking-wider" style={{ color: "hsl(220 15% 60%)" }}>Телефон</label>
-                  <input
-                    type="tel"
-                    inputMode="tel"
-                    autoComplete="tel"
-                    placeholder="+7 (___) ___-__-__"
+                  <PhoneInput
                     value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: formatRuPhone(e.target.value) })}
-                    onKeyDown={(e) => {
-                      if (e.metaKey || e.ctrlKey || e.altKey) return;
-                      if (e.key === "Backspace") {
-                        e.preventDefault();
-                        const digits = form.phone.replace(/\D/g, "");
-                        setForm((f) => ({ ...f, phone: formatRuPhone(digits.slice(0, -1)) }));
-                        return;
-                      }
-                      if (e.key === "Delete") {
-                        e.preventDefault();
-                        setForm((f) => ({ ...f, phone: "" }));
-                        return;
-                      }
-                      const navKeys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Tab", "Home", "End", "Enter"];
-                      if (navKeys.includes(e.key)) return;
-                      if (!/^\d$/.test(e.key)) e.preventDefault();
-                    }}
-                    onPaste={(e) => {
-                      e.preventDefault();
-                      const text = e.clipboardData.getData("text");
-                      setForm((f) => ({ ...f, phone: formatRuPhone(text) }));
-                    }}
+                    onValueChange={(phone) => setForm((f) => ({ ...f, phone }))}
                     disabled={loading}
                     required
-                    maxLength={18}
                     className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all"
-                    style={{ background: "hsl(222 35% 9%)", border: "1px solid hsl(222 25% 22%)", color: "hsl(0 0% 100%)" }}
+                    style={fieldStyle}
                     onFocus={(e) => (e.currentTarget.style.borderColor = "hsl(222 80% 55%)")}
                     onBlur={(e) => (e.currentTarget.style.borderColor = "hsl(222 25% 22%)")}
                   />
@@ -234,15 +183,23 @@ export function HomeCallbackSection() {
                     disabled={loading}
                     maxLength={2000}
                     className="w-full resize-none rounded-xl px-4 py-3 text-sm outline-none transition-all"
-                    style={{ background: "hsl(222 35% 9%)", border: "1px solid hsl(222 25% 22%)", color: "hsl(0 0% 100%)" }}
+                    style={fieldStyle}
                     onFocus={(e) => (e.currentTarget.style.borderColor = "hsl(222 80% 55%)")}
                     onBlur={(e) => (e.currentTarget.style.borderColor = "hsl(222 25% 22%)")}
                   />
                 </div>
 
+                <ConsentCheckbox
+                  id="home-privacy-consent"
+                  checked={consent}
+                  onCheckedChange={setConsent}
+                  disabled={loading}
+                  dark
+                />
+
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !consent}
                   aria-busy={loading}
                   className="group mt-2 inline-flex w-full items-center justify-center gap-2.5 rounded-xl px-6 py-4 text-sm font-semibold transition-all duration-300 hover:brightness-110 disabled:opacity-70"
                   style={{ background: "linear-gradient(135deg, hsl(222 80% 50%), hsl(222 80% 40%))", color: "hsl(0 0% 100%)", boxShadow: "0 10px 30px hsl(222 80% 50% / 0.4), inset 0 1px 0 hsl(0 0% 100% / 0.12)" }}

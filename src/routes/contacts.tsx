@@ -1,11 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { PageHero } from "@/components/PageHero";
+import { PhoneInput } from "@/components/PhoneInput";
+import { ConsentCheckbox, CONSENT_REQUIRED_MSG } from "@/components/ConsentCheckbox";
 import { Phone, Mail, MapPin, Send, MessageCircle, MessagesSquare, Clock, ShieldCheck, ArrowRight, Loader2, Building2 } from "lucide-react";
 import { useState, useRef } from "react";
 import { LEGAL } from "@/lib/legal";
+import { isCompleteRuPhone, PHONE_INCOMPLETE_MSG } from "@/lib/phone";
 
 const BITRIX_LEAD_ENDPOINT = "https://algff.bitrix24.ru/rest/171/byn2r62fvjj301yx/crm.lead.add.json";
-const SUCCESS_MSG = "Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.";
 const ERROR_MSG = "Не удалось отправить заявку. Попробуйте ещё раз.";
 
 export const Route = createFileRoute("/contacts")({
@@ -18,29 +20,10 @@ export const Route = createFileRoute("/contacts")({
   component: ContactsPage,
 });
 
-function formatRuPhone(input: string): string {
-  const digits = input.replace(/\D/g, "");
-  let d = digits;
-  if (d.length === 0) return "";
-  if (d[0] === "8") d = "7" + d.slice(1);
-  if (d[0] !== "7") d = "7" + d;
-  d = d.slice(0, 11);
-  const p1 = d.slice(1, 4);
-  const p2 = d.slice(4, 7);
-  const p3 = d.slice(7, 9);
-  const p4 = d.slice(9, 11);
-  let out = "+7";
-  if (d.length > 1) out += " (" + p1;
-  if (d.length >= 4) out += ")";
-  if (p2) out += " " + p2;
-  if (p3) out += "-" + p3;
-  if (p4) out += "-" + p4;
-  return out;
-}
-
 function ContactsPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const lastSubmitRef = useRef(0);
@@ -56,9 +39,12 @@ function ContactsPage() {
       setStatus({ type: "error", text: "Укажите имя и телефон" });
       return;
     }
-    const phoneDigits = formData.phone.replace(/\D/g, "");
-    if (phoneDigits.length !== 11) {
-      setStatus({ type: "error", text: "Введите телефон полностью: +7 (___) ___-__-__" });
+    if (!isCompleteRuPhone(formData.phone)) {
+      setStatus({ type: "error", text: PHONE_INCOMPLETE_MSG });
+      return;
+    }
+    if (!consent) {
+      setStatus({ type: "error", text: CONSENT_REQUIRED_MSG });
       return;
     }
 
@@ -95,6 +81,7 @@ function ContactsPage() {
 
       if (res.ok && data && !data.error && data.result) {
         setFormData({ name: "", phone: "", message: "" });
+        setConsent(false);
         navigate({ to: "/thank-you" });
         return;
       } else {
@@ -204,42 +191,21 @@ function ContactsPage() {
                 <p className="mt-2.5 text-sm text-muted-foreground">Оставьте номер — перезвоним и обсудим задачу.</p>
                 <form onSubmit={handleSubmit} className="mt-8 space-y-4" noValidate>
                   <input type="text" placeholder="Имя" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="form-input" required disabled={loading} maxLength={100} />
-                  <input
-                    type="tel"
-                    inputMode="tel"
-                    autoComplete="tel"
-                    placeholder="+7 (___) ___-__-__"
+                  <PhoneInput
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: formatRuPhone(e.target.value) })}
-                    onKeyDown={(e) => {
-                      if (e.metaKey || e.ctrlKey || e.altKey) return;
-                      if (e.key === "Backspace") {
-                        e.preventDefault();
-                        const digits = formData.phone.replace(/\D/g, "");
-                        setFormData((f) => ({ ...f, phone: formatRuPhone(digits.slice(0, -1)) }));
-                        return;
-                      }
-                      if (e.key === "Delete") {
-                        e.preventDefault();
-                        setFormData((f) => ({ ...f, phone: "" }));
-                        return;
-                      }
-                      const navKeys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Tab", "Home", "End", "Enter"];
-                      if (navKeys.includes(e.key)) return;
-                      if (!/^\d$/.test(e.key)) e.preventDefault();
-                    }}
-                    onPaste={(e) => {
-                      e.preventDefault();
-                      const text = e.clipboardData.getData("text");
-                      setFormData((f) => ({ ...f, phone: formatRuPhone(text) }));
-                    }}
+                    onValueChange={(phone) => setFormData((f) => ({ ...f, phone }))}
                     className="form-input"
                     required
                     disabled={loading}
-                    maxLength={18}
                   />
                   <textarea placeholder="Опишите задачу" value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} rows={3} className="form-input resize-none" disabled={loading} maxLength={2000} />
-                  <button type="submit" className="btn-primary w-full justify-center" disabled={loading} aria-busy={loading}>
+                  <ConsentCheckbox
+                    id="contacts-privacy-consent"
+                    checked={consent}
+                    onCheckedChange={setConsent}
+                    disabled={loading}
+                  />
+                  <button type="submit" className="btn-primary w-full justify-center" disabled={loading || !consent} aria-busy={loading}>
                     {loading ? (<><Loader2 className="h-4 w-4 animate-spin" /> Отправка...</>) : (<>Перезвоните мне <ArrowRight className="h-4 w-4" /></>)}
                   </button>
                   {status && (
