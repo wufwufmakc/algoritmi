@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { PageHero } from "@/components/PageHero";
-import { Phone, Mail, MapPin, Send, MessageCircle, MessagesSquare, Clock, ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
+import { Phone, Mail, MapPin, Send, MessageCircle, MessagesSquare, Clock, ShieldCheck, ArrowRight, Loader2, Building2 } from "lucide-react";
 import { useState, useRef } from "react";
+import { LEGAL } from "@/lib/legal";
 
 const BITRIX_LEAD_ENDPOINT = "https://algff.bitrix24.ru/rest/171/byn2r62fvjj301yx/crm.lead.add.json";
 const SUCCESS_MSG = "Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.";
@@ -121,9 +122,9 @@ function ContactsPage() {
           <div className="grid gap-14 lg:grid-cols-2">
             <div className="space-y-5">
               {[
-                { icon: Phone, title: "Телефон", value: "8 (812) 740-66-04", href: "tel:+78127406604" },
-                { icon: Mail, title: "Email", value: "info@algff.ru", href: "mailto:info@algff.ru" },
-                { icon: MapPin, title: "Адрес", value: "Санкт-Петербург, Колпинский район, посёлок Петро-Славянка, Софийская улица, 118к5с2, 196642", href: "https://yandex.ru/maps/-/CPGJMAZY" },
+                { icon: Phone, title: "Телефон", value: LEGAL.phoneDisplay, href: `tel:${LEGAL.phoneTel}` },
+                { icon: Mail, title: "Email", value: LEGAL.email, href: `mailto:${LEGAL.email}` },
+                { icon: MapPin, title: "Склад", value: LEGAL.warehouseAddressShort, href: LEGAL.mapsUrl },
                 { icon: Clock, title: "Режим работы", value: "Пн–Пт: 09:00–18:00, Сб: 10:00–16:00", href: undefined },
               ].map((item) => (
                 <div key={item.value} className="premium-card group flex items-start gap-5 rounded-xl p-6">
@@ -140,6 +141,37 @@ function ContactsPage() {
                   </div>
                 </div>
               ))}
+
+              <div className="premium-card rounded-xl p-6">
+                <div className="flex items-start gap-5">
+                  <div className="icon-box h-11 w-11">
+                    <Building2 className="h-5 w-5" style={{ color: "hsl(222 80% 45%)" }} />
+                  </div>
+                  <div className="min-w-0 space-y-2">
+                    <div className="text-sm font-semibold text-foreground">Реквизиты</div>
+                    <dl className="space-y-1.5 text-sm text-muted-foreground">
+                      <div>
+                        <dt className="sr-only">ИП</dt>
+                        <dd>{LEGAL.entityName}</dd>
+                      </div>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1">
+                        <div>
+                          <dt className="inline text-muted-foreground/70">ИНН </dt>
+                          <dd className="inline">{LEGAL.inn}</dd>
+                        </div>
+                        <div>
+                          <dt className="inline text-muted-foreground/70">ОГРНИП </dt>
+                          <dd className="inline">{LEGAL.ogrnip}</dd>
+                        </div>
+                      </div>
+                      <div>
+                        <dt className="text-muted-foreground/70">Юридический адрес</dt>
+                        <dd className="mt-0.5">{LEGAL.legalAddress}</dd>
+                      </div>
+                    </dl>
+                  </div>
+                </div>
+              </div>
 
               <div className="flex gap-3 pt-2">
                 <a href="https://t.me/Algoritmi_FF_Bot" target="_blank" rel="noopener noreferrer" className="btn-outline flex-1 justify-center">

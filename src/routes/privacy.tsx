@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero } from "@/components/PageHero";
+import { LEGAL } from "@/lib/legal";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
       { title: "Политика конфиденциальности | Алгоритмы, фулфилмент СПб" },
-      { name: "description", content: "Политика конфиденциальности и обработки персональных данных ООО «Алгоритмы»." },
+      { name: "description", content: `Политика конфиденциальности и обработки персональных данных ${LEGAL.entityNameShort}.` },
       { name: "robots", content: "index, follow" },
     ],
   }),
@@ -32,8 +33,8 @@ function PrivacyPage() {
             <Section title="1. Общие положения">
               <p>
                 Настоящая Политика конфиденциальности (далее — «Политика») действует в отношении всей информации,
-                которую компания «Алгоритмы» (далее — «Оператор»), расположенная по адресу: Санкт-Петербург,
-                Колпинский район, пос. Петро-Славянка, Софийская ул., 118к5с2, может получить о пользователе во время
+                которую {LEGAL.entityName} (бренд «{LEGAL.brandName}», далее — «Оператор»), ИНН {LEGAL.inn},
+                ОГРНИП {LEGAL.ogrnip}, юридический адрес: {LEGAL.legalAddress}, может получить о пользователе во время
                 использования сайта <a className="text-primary hover:underline" href="https://algff.ru">algff.ru</a> (далее — «Сайт»).
               </p>
               <p>
@@ -122,9 +123,12 @@ function PrivacyPage() {
                 По вопросам, связанным с обработкой персональных данных, обращайтесь:
               </p>
               <ul className="ml-5 list-disc space-y-2">
-                <li>E-mail: <a className="text-primary hover:underline" href="mailto:info@algff.ru">info@algff.ru</a></li>
-                <li>Телефон: <a className="text-primary hover:underline" href="tel:+78127406604">8 (812) 740-66-04</a></li>
-                <li>Адрес: 196642, Санкт-Петербург, пос. Петро-Славянка, Софийская ул., 118к5с2.</li>
+                <li>Оператор: {LEGAL.entityName}</li>
+                <li>ИНН {LEGAL.inn}, ОГРНИП {LEGAL.ogrnip}</li>
+                <li>Юридический адрес: {LEGAL.legalAddress}</li>
+                <li>Адрес склада: {LEGAL.warehouseAddress}</li>
+                <li>E-mail: <a className="text-primary hover:underline" href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a></li>
+                <li>Телефон: <a className="text-primary hover:underline" href={`tel:${LEGAL.phoneTel}`}>{LEGAL.phoneDisplay}</a></li>
               </ul>
             </Section>
           </article>
