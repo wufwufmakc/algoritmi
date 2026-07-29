@@ -9,68 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WmsRouteImport } from './routes/wms'
-import { Route as ThankYouRouteImport } from './routes/thank-you'
-import { Route as ServicesRouteImport } from './routes/services'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as MarketplacesRouteImport } from './routes/marketplaces'
-import { Route as KgtRouteImport } from './routes/kgt'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as EcommerceRouteImport } from './routes/ecommerce'
-import { Route as ContactsRouteImport } from './routes/contacts'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ContactsRouteImport } from './routes/contacts'
+import { Route as EcommerceRouteImport } from './routes/ecommerce'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as KgtRouteImport } from './routes/kgt'
+import { Route as MarketplacesRouteImport } from './routes/marketplaces'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ServicesRouteImport } from './routes/services'
+import { Route as ThankYouRouteImport } from './routes/thank-you'
+import { Route as WmsRouteImport } from './routes/wms'
 import { Route as ApiBitrixLeadRouteImport } from './routes/api.bitrix-lead'
 
-const WmsRoute = WmsRouteImport.update({
-  id: '/wms',
-  path: '/wms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ThankYouRoute = ThankYouRouteImport.update({
-  id: '/thank-you',
-  path: '/thank-you',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ServicesRoute = ServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MarketplacesRoute = MarketplacesRouteImport.update({
-  id: '/marketplaces',
-  path: '/marketplaces',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KgtRoute = KgtRouteImport.update({
-  id: '/kgt',
-  path: '/kgt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EcommerceRoute = EcommerceRouteImport.update({
-  id: '/ecommerce',
-  path: '/ecommerce',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactsRoute = ContactsRouteImport.update({
-  id: '/contacts',
-  path: '/contacts',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -78,9 +33,54 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ContactsRoute = ContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EcommerceRoute = EcommerceRouteImport.update({
+  id: '/ecommerce',
+  path: '/ecommerce',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KgtRoute = KgtRouteImport.update({
+  id: '/kgt',
+  path: '/kgt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplacesRoute = MarketplacesRouteImport.update({
+  id: '/marketplaces',
+  path: '/marketplaces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ThankYouRoute = ThankYouRouteImport.update({
+  id: '/thank-you',
+  path: '/thank-you',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WmsRoute = WmsRouteImport.update({
+  id: '/wms',
+  path: '/wms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBitrixLeadRoute = ApiBitrixLeadRouteImport.update({
@@ -201,74 +201,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wms': {
-      id: '/wms'
-      path: '/wms'
-      fullPath: '/wms'
-      preLoaderRoute: typeof WmsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/thank-you': {
-      id: '/thank-you'
-      path: '/thank-you'
-      fullPath: '/thank-you'
-      preLoaderRoute: typeof ThankYouRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/marketplaces': {
-      id: '/marketplaces'
-      path: '/marketplaces'
-      fullPath: '/marketplaces'
-      preLoaderRoute: typeof MarketplacesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/kgt': {
-      id: '/kgt'
-      path: '/kgt'
-      fullPath: '/kgt'
-      preLoaderRoute: typeof KgtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ecommerce': {
-      id: '/ecommerce'
-      path: '/ecommerce'
-      fullPath: '/ecommerce'
-      preLoaderRoute: typeof EcommerceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contacts': {
-      id: '/contacts'
-      path: '/contacts'
-      fullPath: '/contacts'
-      preLoaderRoute: typeof ContactsRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -278,11 +215,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/contacts': {
+      id: '/contacts'
+      path: '/contacts'
+      fullPath: '/contacts'
+      preLoaderRoute: typeof ContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ecommerce': {
+      id: '/ecommerce'
+      path: '/ecommerce'
+      fullPath: '/ecommerce'
+      preLoaderRoute: typeof EcommerceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kgt': {
+      id: '/kgt'
+      path: '/kgt'
+      fullPath: '/kgt'
+      preLoaderRoute: typeof KgtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplaces': {
+      id: '/marketplaces'
+      path: '/marketplaces'
+      fullPath: '/marketplaces'
+      preLoaderRoute: typeof MarketplacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/thank-you': {
+      id: '/thank-you'
+      path: '/thank-you'
+      fullPath: '/thank-you'
+      preLoaderRoute: typeof ThankYouRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wms': {
+      id: '/wms'
+      path: '/wms'
+      fullPath: '/wms'
+      preLoaderRoute: typeof WmsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/bitrix-lead': {

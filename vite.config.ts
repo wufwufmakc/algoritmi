@@ -1,9 +1,11 @@
-// @lovable.dev/vite-tanstack-config already includes the following — do NOT add them manually
-// or the app will break with duplicate plugins:
-//   - tanstackStart, viteReact, tailwindcss, tsConfigPaths, cloudflare (build-only),
-//     componentTagger (dev-only), VITE_* env injection, @ path alias, React/TanStack dedupe,
-//     error logger plugins, and sandbox detection (port/host/strictPort).
-// You can pass additional config via defineConfig({ vite: { ... } }) if needed.
+// @lovable.dev/vite-tanstack-config already includes tanstackStart, viteReact,
+// tailwindcss, tsConfigPaths, nitro (build-only), and related Lovable plugins.
+// Pin Nitro to Vercel so production builds emit `.vercel/output` (default is
+// cloudflare-module, which causes platform NOT_FOUND on Vercel).
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig();
+export default defineConfig({
+  nitro: {
+    preset: "vercel",
+  },
+});
