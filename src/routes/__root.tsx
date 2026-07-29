@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FloatingButtons } from "@/components/FloatingButtons";
+import { CookieBanner } from "@/components/CookieBanner";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -19,14 +20,6 @@ function NotFoundComponent() {
     </div>
   );
 }
-
-const YM_ID = 109922477;
-const YM_SCRIPT = `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-m[i].l=1*new Date();
-for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-(window, document, "script", "https://mc.yandex.ru/metrika/tag.js?id=${YM_ID}", "ym");
-ym(${YM_ID}, "init", {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});`;
 
 export const Route = createRootRoute({
   head: () => ({
@@ -55,9 +48,6 @@ export const Route = createRootRoute({
       { rel: "apple-touch-icon", href: "/icon-512.png?v=algff6", sizes: "512x512" },
       { rel: "stylesheet", href: appCss },
     ],
-    scripts: [
-      { children: YM_SCRIPT },
-    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -71,11 +61,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <noscript><div><img src={`https://mc.yandex.ru/watch/${YM_ID}`} style={{position:'absolute',left:'-9999px'}} alt="" /></div></noscript>
         {children}
         <Scripts />
       </body>
-
     </html>
   );
 }
@@ -99,6 +87,7 @@ function RootComponent() {
       </main>
       <Footer />
       <FloatingButtons />
+      <CookieBanner />
     </>
   );
 }
