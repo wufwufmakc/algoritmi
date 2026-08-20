@@ -25,7 +25,7 @@ export function FloatingButtons() {
         <Phone className="h-5 w-5 text-white transition-transform group-hover:scale-110" />
       </a>
       <a
-        href="https://t.me/Algoritmi_FF_Bot"
+        href="https://t.me/algffspbbot"
         target="_blank"
         rel="noopener noreferrer"
         className="floating-btn group"

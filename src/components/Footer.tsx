@@ -20,7 +20,7 @@ export function Footer() {
               Фулфилмент-оператор класса&nbsp;А в&nbsp;Санкт-Петербурге. Системный подход к&nbsp;хранению, обработке и&nbsp;отгрузке товаров.
             </p>
             <div className="mt-6 flex gap-2.5">
-              <a href="https://t.me/Algoritmi_FF_Bot" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 hover:scale-105" style={{ background: "hsl(222 25% 18%)", border: "1px solid hsl(222 25% 24%)" }}>
+              <a href="https://t.me/algffspbbot" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 hover:scale-105" style={{ background: "hsl(222 25% 18%)", border: "1px solid hsl(222 25% 24%)" }}>
                 <Send className="h-4 w-4" style={{ color: "hsl(210 20% 80%)" }} />
               </a>
               <a href="https://wa.me/78127406604" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 hover:scale-105" style={{ background: "hsl(222 25% 18%)", border: "1px solid hsl(222 25% 24%)" }}>

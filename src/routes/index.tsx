@@ -76,7 +76,7 @@ function HomePage() {
                 <Link to="/pricing" className="group inline-flex items-center gap-2.5 rounded-xl px-8 py-4 text-sm font-semibold transition-all duration-300 hover:brightness-110" style={{ background: "linear-gradient(135deg, hsl(222 80% 50%), hsl(222 80% 40%))", color: "hsl(0 0% 100%)", boxShadow: "0 4px 24px hsl(222 80% 50% / 0.4), inset 0 1px 0 hsl(0 0% 100% / 0.1)" }}>
                   Получить расчёт <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Link>
-                <a href="https://t.me/Algoritmi_FF_Bot" target="_blank" rel="noopener noreferrer" className="btn-outline-dark"><Send className="h-4 w-4" /> Telegram</a>
+                <a href="https://t.me/algffspbbot" target="_blank" rel="noopener noreferrer" className="btn-outline-dark"><Send className="h-4 w-4" /> Telegram</a>
                 <a href="https://wa.me/78127406604" target="_blank" rel="noopener noreferrer" className="btn-outline-dark"><MessageCircle className="h-4 w-4" /> WhatsApp</a>
                 <a href="https://max.ru/u/f9LHodD0cOII2k93wFHTeiNgRFNp3TVwQ8Mt-3nvVXxES8JQMDKdFrTqk6k" target="_blank" rel="noopener noreferrer" className="btn-outline-dark"><MessagesSquare className="h-4 w-4" /> MAX</a>
               </div>

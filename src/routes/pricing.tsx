@@ -116,7 +116,7 @@ function PricingPage() {
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">Напишите в Telegram или WhatsApp.</p>
                 <div className="mt-4 flex gap-3">
-                  <a href="https://t.me/Algoritmi_FF_Bot" target="_blank" rel="noopener noreferrer" className="btn-outline text-sm">
+                  <a href="https://t.me/algffspbbot" target="_blank" rel="noopener noreferrer" className="btn-outline text-sm">
                     <Send className="h-3.5 w-3.5" /> Telegram
                   </a>
                   <a href="https://wa.me/78127406604" target="_blank" rel="noopener noreferrer" className="btn-outline text-sm">

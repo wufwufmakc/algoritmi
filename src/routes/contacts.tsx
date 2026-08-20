@@ -161,7 +161,7 @@ function ContactsPage() {
               </div>
 
               <div className="flex gap-3 pt-2">
-                <a href="https://t.me/Algoritmi_FF_Bot" target="_blank" rel="noopener noreferrer" className="btn-outline flex-1 justify-center">
+                <a href="https://t.me/algffspbbot" target="_blank" rel="noopener noreferrer" className="btn-outline flex-1 justify-center">
                   <Send className="h-4 w-4" /> Telegram
                 </a>
                 <a href="https://wa.me/78127406604" target="_blank" rel="noopener noreferrer" className="btn-outline flex-1 justify-center">

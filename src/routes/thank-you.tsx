@@ -135,13 +135,13 @@ function ThankYouPage() {
                 </div>
               </a>
 
-              <a href="https://t.me/Algoritmi_FF_Bot" target="_blank" rel="noopener noreferrer" className="premium-card flex items-center gap-3 p-4 transition-all hover:border-primary/20">
+              <a href="https://t.me/algffspbbot" target="_blank" rel="noopener noreferrer" className="premium-card flex items-center gap-3 p-4 transition-all hover:border-primary/20">
                 <div className="icon-box h-10 w-10">
                   <Send className="h-4 w-4" style={{ color: "hsl(222 80% 45%)" }} />
                 </div>
                 <div className="text-left">
                   <div className="text-xs text-muted-foreground">Telegram</div>
-                  <div className="text-sm font-semibold text-foreground">@Algoritmi_FF_Bot</div>
+                  <div className="text-sm font-semibold text-foreground">@algffspbbot</div>
                 </div>
               </a>
 

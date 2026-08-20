@@ -90,7 +90,7 @@ export function Header() {
 
         <div className="hidden shrink-0 items-center gap-1.5 lg:flex">
           <a
-            href="https://t.me/Algoritmi_FF_Bot"
+            href="https://t.me/algffspbbot"
             target="_blank"
             rel="noopener noreferrer"
             className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors ${iconHover}`}
@@ -176,7 +176,7 @@ export function Header() {
               </a>
               <div className="flex gap-2">
                 <a
-                  href="https://t.me/Algoritmi_FF_Bot"
+                  href="https://t.me/algffspbbot"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-outline flex-1 justify-center !py-3 text-xs"

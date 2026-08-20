@@ -13,5 +13,7 @@ export const LEGAL = {
   email: "info@algff.ru",
   phoneDisplay: "8 (812) 740-66-04",
   phoneTel: "+78127406604",
+  telegramHandle: "@algffspbbot",
+  telegramUrl: "https://t.me/algffspbbot",
   mapsUrl: "https://yandex.ru/maps/-/CPGJMAZY",
 } as const;
